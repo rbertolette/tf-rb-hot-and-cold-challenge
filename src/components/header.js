@@ -1,7 +1,9 @@
 import React from 'react';
-// TODO switch links after eslint-disable-next-line to be more a11y complient
 
 export default function Header(props) {
+  const modalStyle = {
+    display: ((props.showInstructions) ? 'block' : 'none')
+  }
   return (
     // <!--Header -->
     <header>
@@ -9,17 +11,16 @@ export default function Header(props) {
       {/* <!-- Top Navigation --> */}
       <nav>
         <ul className="clearfix">
-          {          
-          // eslint-disable-next-line
-          }<li><a className="what" href="#">What ?</a></li>
           {
-          // eslint-disable-next-line
-          }<li><a className="new" href="#">+ New Game</a></li>
+            // eslint-disable-next-line
+          }<li><button className="what" onClick={props.whatBut}>What ?</button></li>
+          <li><button className="new" onClick={props.newGameBut}>+ New Game</button></li>
         </ul>
       </nav>
 
       {/* <!-- Modal Information Box --> */}
-      <div className="overlay" id="modal">
+      {/* <div className={this.props.modelClass} id="modal"> */}
+      <div className="overlay" id="modal" style={modalStyle}>
         <div className="content">
           <h3>What do I do?</h3>
           <div>
@@ -30,9 +31,7 @@ export default function Header(props) {
               <li>3. You will <strong>get feedback</strong> on how close ("hot") or far ("cold") your guess is.</li>
             </ul>
             <p>So, Are you ready?</p>
-            {
-            // eslint-disable-next-line
-            }<a className="close" href="#">Got It!</a>
+            <button className="close" onClick={props.closeBut}>Got It!</button>
           </div>
         </div>
       </div>

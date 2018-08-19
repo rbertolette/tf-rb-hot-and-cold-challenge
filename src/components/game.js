@@ -2,20 +2,21 @@ import React from 'react';
 import Header from './header';
 
 export default class Game extends React.Component {
-  
+
   constructor(props) {
     super(props);
 
-    const min  = 1;
+    const min = 1;
     const max = 100;
     this.state = {
       guesses: [],
       hint: 'Make your Guess!',
       answerNumber: this.getRandomIntInclusive(min, max),
-      lastGuess: false,
+      lastGuess: -1000,
       min: min,
       max: max,
-      isWon: false
+      isWon: false,
+      showInstructions: false
     }
   }
 
@@ -40,7 +41,7 @@ export default class Game extends React.Component {
     // prevent submit from redrawing the page
     e.preventDefault();
     const myGuess = this.textInput.value.trim();
-    
+
     this.textInput.value = '';
 
     // validate that it's a number between min & max
@@ -56,6 +57,10 @@ export default class Game extends React.Component {
         errMsg = `Number must be between ${this.state.min} and ${this.state.max}.`;
         break;
 
+      case (this.state.guesses.includes(myGuess)):
+        errMsg = `You've already guessed ${myGuess}.`;
+        break;
+
       default:
     }
 
@@ -67,9 +72,6 @@ export default class Game extends React.Component {
     // calculate the how close the last guess and this guess are as positive integers
     const lastDif = Math.abs(this.state.answerNumber - this.state.lastGuess);
     const thisDif = Math.abs(this.state.answerNumber - myGuess);
-
-    console.log(myGuess);
-    console.log(this.state.answerNumber);
 
     // string to hold the new hint
     let myHint;
@@ -98,26 +100,65 @@ export default class Game extends React.Component {
       hint: myHint,
       isWon: isWon
     });
+  }
 
+  /**
+   * callback for Header New Game Button
+   */
+  newGameBut() {
+    this.setState({
+      guesses: [],
+      hint: 'Make your Guess!',
+      answerNumber: this.getRandomIntInclusive(this.state.min, this.state.max),
+      lastGuess: -1000,
+      isWon: false
+    });
+  }
 
+  /**
+   * callback for Header What? button
+   */
+  whatBut() {
+    this.setState({
+      showInstructions: true
+    });
+  }
+
+  /**
+   * Callback for Header close button (on modal)
+   * @param {Event} e 
+   */
+  closeInstructions(e) {
+    e.preventDefault();
+    this.setState({
+      showInstructions: false
+    });
   }
 
   render() {
-    console.log(this.state);
     // create li elements for each guess
     const guesses = this.state.guesses.map((guess, index) =>
       <li key={index}>
         {guess}
       </li>
     );
+
+
+    const headerProps = {
+      newGameBut: (e) => this.newGameBut(e),
+      whatBut: (e) => this.whatBut(e),
+      showInstructions: this.state.showInstructions,
+      closeBut: (e) => this.closeInstructions(e)
+    }
     return (
       <div>
-        <Header />
-        <section className="game">
+        {/* <Header newGameBut={(e) => this.newGameBut(e)} whatBut={(e) => this.whatBut(e)} /> */}
+        <Header {...headerProps} />
 
+        <section className="game">
           <h2 id="feedback">{this.state.hint}</h2>
 
-          <form  onSubmit={(e) => this.addGuess(e)}>
+          <form onSubmit={(e) => this.addGuess(e)}>
             <input
               disabled={this.state.isWon}
               type="text"
