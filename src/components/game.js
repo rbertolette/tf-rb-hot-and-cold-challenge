@@ -88,7 +88,10 @@ export default class Game extends React.Component {
 
       case (thisDif > lastDif):
         myHint = 'Getting colder';
-        break;
+        break
+
+      case (thisDif === lastDif):
+        myHint = 'Neither colder (that\'s a big hint)'
 
       default:
         myHint = 'Unexpected Err'
